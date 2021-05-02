@@ -17,17 +17,19 @@ namespace incidents_observer.HostedServices
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
         private readonly IServiceScopeFactory _serviceScopeFactory;
+        private int _timeOfExecution;
 
         public IncidentServiceHosted(ILogger<IncidentServiceHosted> logger, IConfiguration configuration, IServiceScopeFactory serviceScopeFactory)
         {
             _configuration = configuration;
             _logger = logger;
             _serviceScopeFactory = serviceScopeFactory;
+            _timeOfExecution = configuration.GetValue<int>("ServiceSettings:TimeOfExecution");
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            new Timer(ExecuteProcess, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
+            new Timer(ExecuteProcess, null, TimeSpan.Zero, TimeSpan.FromSeconds(_timeOfExecution));
             Task.WhenAll(Task.CompletedTask);
             return Task.CompletedTask;
         }
