@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace incidents_observer.Controllers
 {
-    [Route("api/healthcheck")]
+    [Route("incidents-observer/healthcheck")]
     public class HealthcheckController : Controller
     {
         [HttpGet]
