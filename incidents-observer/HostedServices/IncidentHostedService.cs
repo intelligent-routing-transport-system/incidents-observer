@@ -29,24 +29,27 @@ namespace incidents_observer.HostedServices
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            new Timer(ExecuteProcess, null, TimeSpan.Zero, TimeSpan.FromSeconds(_timeOfExecution));
-            Task.WhenAll(Task.CompletedTask);
+            Thread thread = new Thread(ExecuteProcess);
+            thread.Start();
             return Task.CompletedTask;
         }
 
-        private async void ExecuteProcess(object state)
+        private async void ExecuteProcess()
         {
-            _logger.LogInformation("### Consume Message Proccess executing ###");
-            var payloadConsumer = new ConsumeMessageFlow(_configuration).Run();
-            _logger.LogInformation("### Produce Message Proccess executing ###");
-            using (var scope = _serviceScopeFactory.CreateScope())
+            while (true)
             {
-                var _uow = scope.ServiceProvider.GetService<IUnityOfWork>();
-                var messageSend = await new ProduceMessageFlow(_configuration, _uow, payloadConsumer).Run();
-                _logger.LogInformation($"### {payloadConsumer} ###");
+                _logger.LogInformation("### Consume Message Proccess executing ###");
+                var payloadConsumer = new ConsumeMessageFlow(_configuration).Run();
+                _logger.LogInformation("### Produce Message Proccess executing ###");
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    var _uow = scope.ServiceProvider.GetService<IUnityOfWork>();
+                    var messageSend = await new ProduceMessageFlow(_configuration, _uow, payloadConsumer).Run();
+                    _logger.LogInformation($"### {payloadConsumer} ###");
+                }
+                _logger.LogInformation("### Finish ###");
+                _logger.LogInformation($"{DateTime.Now}");
             }
-            _logger.LogInformation("### Finish ###");
-            _logger.LogInformation($"{DateTime.Now}");
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
