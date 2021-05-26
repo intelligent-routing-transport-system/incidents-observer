@@ -46,7 +46,7 @@ namespace incidents_observer.HostedServices
                     var _uow = scope.ServiceProvider.GetService<IUnityOfWork>();
                     var messageSend = await new ProduceMessageFlow(_configuration, _uow, payloadConsumer).Run();
                     _logger.LogInformation($"### {payloadConsumer} ###");
-                }
+                }  
                 _logger.LogInformation("### Finish ###");
                 _logger.LogInformation($"{DateTime.Now}");
             }

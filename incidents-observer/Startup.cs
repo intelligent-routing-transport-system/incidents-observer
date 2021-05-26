@@ -37,7 +37,7 @@ namespace incidents_observer
             services.AddScoped<IUnityOfWork, UnityOfWork>();
 
             services.AddDbContext<AppDbContext>(options =>
-                options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), x => x.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null)));
 
             services.AddHostedService<IncidentServiceHosted>();
 
