@@ -47,5 +47,5 @@ jobs:
         echo "Pushing image to ECR..."
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-        aws ecs stop-task --cluster ecs-tcc-apis --task $(aws ecs list-tasks --cluster ecs-tcc-apis --service ecs-service-incidents-observer --output text --query taskArns[0])
-        aws ecs update-service --cluster ecs-tcc-apis --service ecs-service-incidents-observer --task-definition task-incidents-observer
+        aws ecs stop-task --cluster ecs-tcc-apis --task $(aws ecs list-tasks --cluster Cluster-TCC --service service-incidents-observer --output text --query taskArns[0])
+        aws ecs update-service --cluster Cluster-TCC --service service-incidents-observer --task-definition task-incidents-observer
