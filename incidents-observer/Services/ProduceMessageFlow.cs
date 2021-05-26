@@ -8,6 +8,8 @@ using incidents_observer.Models.Configurations;
 using System.Threading.Tasks;
 using incidents_observer.Repository.UnityOfWork;
 using incidents_observer.Models;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace incidents_observer.Services
 {
@@ -35,7 +37,11 @@ namespace incidents_observer.Services
         {
             try
             {
-                var messagaDatabase = _uof.MessageRepository.GetById(x => x.IdSensor == _payloadConsumer.SensorId).Result;
+                var messagaDatabase = await _uof.MessageRepository.
+                    Get()
+                    .Where(x => x.IdSensor == _payloadConsumer.SensorId)
+                    .FirstOrDefaultAsync();
+
                 var payloadProducer = new PayloadProducer()
                 {
                     Coords = new PayloadProducer.Coord { Latitude = _payloadConsumer.Coords.Latitude, Longitude = _payloadConsumer.Coords.Longitude },
